@@ -5,57 +5,61 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    private Rigidbody2D rigid;
-    private Animator animator;
+    private Rigidbody2D m_Rigid;
+    private Animator m_Animator;
+    private Transform m_Transform;
     
     [SerializeField] private float moveSpeed = 10f;
-    private float chrouchSpeed = 0.5f;
+    private readonly float chrouchSpeed = 0.5f;
     
-    private bool isChrouch = false;
-    private bool isFlipped = false;
+    private bool m_IsChrouch = false;
+    private bool m_IsFlipped = false;
     
-    private static readonly int Speed = Animator.StringToHash("Speed");
-    private static readonly int Chrouch = Animator.StringToHash("Chrouch");
-    private static readonly int Jump = Animator.StringToHash("Jump");
+    private readonly int m_Speed = Animator.StringToHash("Speed");
+    private readonly int m_Chrouch = Animator.StringToHash("Chrouch");
+    private readonly int m_Jump = Animator.StringToHash("Jump");
 
     private void Awake()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        m_Rigid = GetComponent<Rigidbody2D>();
+        m_Animator = GetComponent<Animator>();
+        m_Transform = transform;
     }
 
     private void FixedUpdate()
     {
         var moveX = Input.GetAxis("Horizontal");
-        isChrouch = Input.GetKey(KeyCode.LeftControl);
+        m_IsChrouch = Input.GetKey(KeyCode.LeftControl);
 
         if (Input.GetKeyDown(KeyCode.J))
         {
-            animator.SetTrigger(Jump);
+            m_Animator.SetTrigger(m_Jump);
         }
 
-        var speedDown = isChrouch ? chrouchSpeed : 1;
+        var speedDown = m_IsChrouch ? chrouchSpeed : 1;
 
-        rigid.velocity = new Vector2(moveX * moveSpeed * speedDown, rigid.velocity.y);
+        m_Rigid.velocity = new Vector2(moveX * moveSpeed * speedDown, m_Rigid.velocity.y);
 
-        if (moveX < 0 && !isFlipped)
+        if (moveX < 0 && !m_IsFlipped)
         {
             Flip();
-            isFlipped = true;
+            m_IsFlipped = true;
         }
 
-        if (moveX > 0 && isFlipped)
+        if (moveX > 0 && m_IsFlipped)
         {
             Flip();
-            isFlipped = false;
+            m_IsFlipped = false;
         }
         
-        animator.SetFloat(Speed, Mathf.Abs(moveX));
-        animator.SetBool(Chrouch, isChrouch);
+        m_Animator.SetFloat(m_Speed, Mathf.Abs(moveX));
+        m_Animator.SetBool(m_Chrouch, m_IsChrouch);
     }
 
     private void Flip()
     {
-        transform.localScale = new Vector3(transform.localScale.x * -1f, transform.localScale.y, transform.localScale.z);
+        Vector3 scale = m_Transform.localScale;
+        scale.x *= -1;
+        m_Transform.localScale = scale;
     }
 }
