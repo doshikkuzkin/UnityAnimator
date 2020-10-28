@@ -9,8 +9,10 @@ public class Gun : MonoBehaviour
     private Animator _animator;
     
     private int IsAiming = Animator.StringToHash("isAiming");
+    private int IsMoving = Animator.StringToHash("isMoving");
 
     private bool aiming;
+    private bool moving;
 
     [SerializeField] private AnimationClip[] shootAnims;
     [SerializeField] private AnimationClip[] aimAnims;
@@ -62,5 +64,13 @@ public class Gun : MonoBehaviour
             animatorOverrideController["Shoot"] = shootAnims[shootIndex];
             _animator.runtimeAnimatorController = animatorOverrideController;
         }
+    }
+
+    public void SetMove(bool value)
+    {
+        if (moving == value) return;
+        moving = value;
+        _animator.SetBool(IsMoving, value);
+
     }
 }
